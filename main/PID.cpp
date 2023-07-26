@@ -2,8 +2,8 @@
 
 PID::PID()
 {
-    _Kp = 1;
-    _Ki = 20;
+    _Kp = 100;
+    _Ki = 0;//20
     _Kd = 0;
     _min = -7000;
     _max = 7000;
@@ -16,7 +16,7 @@ PID::PID()
 float PID::calculate( float w_rocket, float dt )
 {
     // Calculate error
-    float error = _setpoint - w_rocket;
+    float error = w_rocket - _setpoint;
 
     // Proportional term
     float Pout = _Kp * error;
