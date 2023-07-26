@@ -1,5 +1,3 @@
-PI = 3.1415926536
-
 class PID
 {
     public:

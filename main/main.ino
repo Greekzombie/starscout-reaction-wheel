@@ -4,8 +4,11 @@
 
 int direction_pin = 10;
 int pwm_pin = 11;
-bool flag = HIGH;
-float dt = 0.01;
+
+// HIGH CLOCKWISE/NEGATIVE
+// LOW ANTICLOCKWISE/POSITIVE
+bool flag = LOW;
+float dt = 0.5;
 float max_speed_motor = 5000 * PI / 30; // rpm -> rad/s
 bool start_controller = false;
 
@@ -16,11 +19,22 @@ PID controller = PID();
 Adafruit_BNO055 bno = Adafruit_BNO055(); // 55, 0x28, &Wire
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(9600);
     pinMode(direction_pin, OUTPUT); //direction control PIN 10 with direction wire 
     pinMode(pwm_pin, OUTPUT);       //PWM PIN 11  with PWM 
+    digitalWrite(direction_pin, flag);
+
+    delay(500); // Wait for the sensor to initialize
+    if (!bno.begin())
+    {
+      Serial.println("Could not find a valid BNO055 sensor, check wiring!");
+      while (1);
+    }
+    Serial.println("BNO055 sensor initialized.");
     
 }
+
+int i = 0;
 
 void loop() {
     // We wait until we detect rocket launch before starting to take measurements.
