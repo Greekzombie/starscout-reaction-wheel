@@ -3,10 +3,10 @@
 PID::PID()
 {
     _Kp = 100;
-    _Ki = 0;//20
+    _Ki = 0;
     _Kd = 0;
-    _min = -7000;
-    _max = 7000;
+    _min = -749; // [rad/s] 7155 * PI / 30
+    _max = 749;
 
     _prev_error = 0;
     _integral = 0;
@@ -25,12 +25,12 @@ float PID::calculate( float w_rocket, float dt )
     _integral += error * dt;
     float Iout = _Ki * _integral;
 
-    // Derivative term
-    float derivative = (error - _prev_error) / dt;
-    float Dout = _Kd * derivative;
+    // Derivative term. We're not using it in this case.
+    //float derivative = (error - _prev_error) / dt;
+    //float Dout = _Kd * derivative;
 
     // Calculate total output
-    float output = Pout + Iout + Dout;
+    float output = Pout + Iout; //+ Dout;
 
     // Restrict to max/min
     // This should protect against integral windup

@@ -17,5 +17,3 @@ class PID
         float _integral;
         float _setpoint;
 };
-
-// Still have to check that the sign of error is correct
