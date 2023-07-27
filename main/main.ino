@@ -8,8 +8,8 @@ int pwm_pin = 11;
 // HIGH CLOCKWISE/NEGATIVE
 // LOW ANTICLOCKWISE/POSITIVE
 bool flag = LOW;
-float dt = 0.5;
-float max_speed_motor = 5000 * PI / 30; // rpm -> rad/s
+float dt = 0.01;
+float max_speed_motor = 7155 * PI / 30; // rpm -> rad/s
 bool start_controller = false;
 
 // We create an instance of the PID controller
@@ -66,6 +66,8 @@ void loop() {
 
         // Map angular velocity to a number between 0 and 255. Max speed of motor corresponds to 5000 rpm = 
         int signal_motor = map(int(abs(w_rw)), 0, max_speed_motor, 0, 255); // map(value, fromLow, fromHigh, toLow, toHigh)
+        signal_motor = 255 - signal_motor
+
         analogWrite(pwm_pin, signal_motor);                     // input speed (must be int)
         Serial.println(signal_motor);
 
