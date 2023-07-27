@@ -1,5 +1,5 @@
 #include <Adafruit_BNO055.h>
-#include <cmath>
+#include <math.h>
 #include "PID.h"
 
 int direction_pin = 10;
@@ -16,6 +16,8 @@ bool start_controller = false;
 PID controller = PID();
 
 // We create an instance of the BNO055 sensor
+// ANTICLOCKWISE - POSITIVE ANGULAR VELOCITY
+// CLOCKWISE / NEGATIVE ANGULAR VELOCITY
 Adafruit_BNO055 bno = Adafruit_BNO055(); // 55, 0x28, &Wire
 
 void setup() {
@@ -55,10 +57,10 @@ void loop() {
 
         // Depending on the sign of w_rocket, we set the direction of the motor
         if (w_rw > 0){
-            flag = HIGH;
+            flag = LOW;
         }
         else {
-            flag = LOW;
+            flag = HIGH;
         }
         digitalWrite(10, flag);
 
