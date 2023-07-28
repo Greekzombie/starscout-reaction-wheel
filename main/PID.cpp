@@ -25,7 +25,7 @@ float PID::calculate( float w_rocket, float dt )
     _integral += error * dt;
     float Iout = _Ki * _integral;
 
-    // Derivative term. We're not using it in this case.
+    // Derivative term. We're not using it in this case.4
     //float derivative = (error - _prev_error) / dt;
     //float Dout = _Kd * derivative;
 
