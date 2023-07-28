@@ -4,6 +4,9 @@ class PID
         PID();
 
         // Returns the manipulated variable given a setpoint and current process value
+        // w_rocket must be given in rad/s
+        // dt must be given in s
+        // output is given in rad/s
         float calculate( float w_rocket, float dt );
 
     private:

@@ -1,3 +1,8 @@
+"""
+Run this file to observe a simulation of a PI controller applied to the case of a reaction
+wheel stabilising a rocket's rotational motion.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -20,13 +25,17 @@ ts = np.arange(0, 10, dt)
 
 
 def get_effect_reaction_wheel(angular_speed_reaction_wheel):
-    angular_speed_rocket = initial_angular_speed_rocket - 1 / 25 * angular_speed_reaction_wheel
+    """
+    Simulate effect reaction wheel will have. Consider idealistic scenario where angular momentum is 
+    conserved. Reaction wheel effectively absorbs the rocket's angular momentum.
+    """
+    ratio_inertia_rocket_rw = 25
+    angular_speed_rocket = initial_angular_speed_rocket - 1 / ratio_inertia_rocket_rw * angular_speed_reaction_wheel
 
     return angular_speed_rocket
 
-
+# Implementation of a simple PI control loop.
 list_angular_speed_rocket = [initial_angular_speed_rocket]
-
 for t in ts:
     error = angular_speed_rocket
     p = k_p * error
@@ -46,4 +55,5 @@ print(angular_speed_rocket)
 plt.plot(ts, list_angular_speed_rocket[:-1])
 plt.xlabel("Time [s]")
 plt.ylabel("Angular Speed of Rocket")
+plt.title("PI Controller Simulation")
 plt.show()
