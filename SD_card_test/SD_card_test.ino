@@ -10,6 +10,7 @@ MOSI - D11
 CS   - SS=D10
 3V3  - 3V3
 
+These links proved of great help:
 https://toptechboy.com/arduino-lesson-21-log-sensor-data-to-an-sd-card/
 https://www.circuitbasics.com/writing-data-to-files-on-an-sd-card-on-arduino/
 
@@ -65,7 +66,8 @@ void initialise_csv_file(int chipSelect){
     //write csv headers to file:
     myFile = SD.open(name_file, FILE_WRITE);  
     if (myFile){ // it opened OK
-        Serial.println("Writing headers to csv.txt");
+        Serial.print("Writing headers to ");
+        Serial.println(name_file)
         myFile.println("Time,w_rocket,w_rw,signal_motor");
         myFile.close(); 
         Serial.println("Headers written");

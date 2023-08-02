@@ -2,17 +2,29 @@
 A PID controller is used to set the speed of a reaction wheel inside a rocket. Data from a gyroscope
 attached to the rocket is used to stabilise the rocket's rotational motion.
 
-With the current setup, a sampling rate of around 250-500 Hz can be achieved.
+The electrical wiring can be seen in the README document. 
  */
 
 #include <Adafruit_BNO055.h>
 #include <math.h>
 #include "PID.h"
 
-// These are the pins to which the reaction wheel's motor is connected
-const int direction_pin = 5;
-const int pwm_pin = 6;
+#include <SD.h>
+#include <SPI.h>
 
+// We define variables for data logging
+File myFile;
+char name_file[] = "reaction_wheel_data_csv.txt";
+
+const int chipSelect = 10;  // PIN TO BE SET ON ARDUINO
+
+char dataStr[200] = "";
+char buffer[50];
+
+// These are the pins to which the reaction wheel's motor is connected
+const int direction_pin = 5;     // PIN TO BE SET ON ARDUINO
+const int pwm_pin = 6;           // PIN TO BE SET ON ARDUINO
+  
 // flag is used to write to the direction pin of the motor
 // HIGH is ANTICLOCKWISE
 // LOW is CLOCKWISE
@@ -40,6 +52,7 @@ Adafruit_BNO055 bno = Adafruit_BNO055(); // 55, 0x28, &Wire
 
 void setup() {
     Serial.begin(115200);
+    initialise_csv_file(chipSelect);
     pinMode(direction_pin, OUTPUT); //direction control PIN 10 with direction wire 
     pinMode(pwm_pin, OUTPUT);       //PWM PIN 11  with PWM 
 
@@ -97,7 +110,7 @@ void loop() {
         signal_motor = constrain(255 - signal_motor, 0, 255);
 
         analogWrite(pwm_pin, signal_motor);                     
-        Serial.println(signal_motor);
+        send_data_to_SD_card(t, w_rocket, w_rw, signal_motor); 
 
         // Introduce a delay into the system
         delay(dt);
@@ -162,4 +175,72 @@ float get_norm_linear_acc(){
     float norm_acc_rocket = sqrt(pow(acc_rocket_x, 2) + pow(acc_rocket_y, 2) + pow(acc_rocket_z, 2));
 
     return norm_acc_rocket;
+}
+
+void initialise_csv_file(int chipSelect){
+    if (SD.begin(chipSelect)){
+        Serial.println("SD card is present & ready");
+    } 
+    else
+    {
+        Serial.println("SD card missing or failure");
+        while(1); //halt program
+    }
+
+    //clear out old data file
+    if (SD.exists(name_file)) 
+    {
+        Serial.println("Removing existing file with same name");
+        SD.remove(name_file);
+        Serial.println("Done");
+    } 
+
+    //write csv headers to file:
+    myFile = SD.open(name_file, FILE_WRITE);  
+    if (myFile){ // it opened OK
+        Serial.print("Writing headers to ");
+        Serial.println(name_file)
+        myFile.println("Time,w_rocket,w_rw,signal_motor");
+        myFile.close(); 
+        Serial.println("Headers written");
+    }
+    else {
+        Serial.print("Error opening ");
+        Serial.println(name_file);
+    }
+        
+}
+
+void send_data_to_SD_card(unsigned long t, float w_rocket, float w_rw, int signal_motor){
+    dataStr[0] = 0;
+
+    //convert floats to string and assemble c-type char string for writing:
+    ltoa(t, buffer, 10); //conver long to charStr
+    strcat(dataStr, buffer);//add it onto the end
+    strcat(dataStr, ", "); //append the delimeter
+
+    //dtostrf(floatVal, minimum width, precision, character array);
+    dtostrf(w_rocket, 20, 5, buffer);  //5 is mininum width, 1 is precision; float value is copied onto buff
+    strcat( dataStr, buffer); //append the converted float
+    strcat( dataStr, ", "); //append the delimeter
+
+    dtostrf(w_rw, 20, 5, buffer);  //5 is mininum width, 1 is precision; float value is copied onto buff
+    strcat( dataStr, buffer); //append the converted float
+    strcat( dataStr, ", "); //append the delimeter
+
+    ltoa(signal_motor, buffer, 10); //conver int to charStr
+    strcat(dataStr, buffer);//add it onto the end
+    strcat( dataStr, 0); //terminate correctly 
+
+    // open the file. Note that only one file can be open at a time,
+    myFile = SD.open(name_file, FILE_WRITE);     
+    // if the file opened okay, write to it:
+    if (myFile) {
+        myFile.println(dataStr); 
+        myFile.close();
+    } 
+    else {
+        Serial.print("Error opening ");
+        Serial.println(name_file);
+    }
 }
