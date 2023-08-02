@@ -27,24 +27,24 @@ char dataStr[200] = "";
 char buffer[50];
 
 unsigned long t = 0;
-float w_rocket = 2.3789;   
+float w_rocket = 343242.378567;   
 float w_rw = 40.89;  
 int signal_motor = 27; 
 
 void setup(){
     Serial.begin(115200);
-    initialise_rw_csv_file(chipSelect);
+    initialise_csv_file(chipSelect);
 
 }
 
 void loop(void) {
     t = millis();
-    send_rw_data_to_SD_card(t, w_rocket, w_rw, signal_motor);  
+    send_data_to_SD_card(t, w_rocket, w_rw, signal_motor);  
     delay(100); 
 
 }
 
-void initialise_rw_csv_file(int chipSelect){
+void initialise_csv_file(int chipSelect){
     if (SD.begin(chipSelect)){
         Serial.println("SD card is present & ready");
     } 
@@ -72,29 +72,29 @@ void initialise_rw_csv_file(int chipSelect){
     }
     else {
         Serial.print("Error opening ");
-        Serial.println(name_file)
+        Serial.println(name_file);
     }
         
 }
 
-void send_rw_data_to_SD_card(unsigned long t, float w_rocket, float w_rw, int signal_motor){
+void send_data_to_SD_card(unsigned long t, float w_rocket, float w_rw, int signal_motor){
     dataStr[0] = 0;
 
     //convert floats to string and assemble c-type char string for writing:
-    ltoa(t, buffer, 12); //conver long to charStr
+    ltoa(t, buffer, 10); //conver long to charStr
     strcat(dataStr, buffer);//add it onto the end
     strcat(dataStr, ", "); //append the delimeter
 
     //dtostrf(floatVal, minimum width, precision, character array);
-    dtostrf(w_rocket, 10, 4, buffer);  //5 is mininum width, 1 is precision; float value is copied onto buff
+    dtostrf(w_rocket, 20, 5, buffer);  //5 is mininum width, 1 is precision; float value is copied onto buff
     strcat( dataStr, buffer); //append the converted float
     strcat( dataStr, ", "); //append the delimeter
 
-    dtostrf(w_rw, 10, 4, buffer);  //5 is mininum width, 1 is precision; float value is copied onto buff
+    dtostrf(w_rw, 20, 5, buffer);  //5 is mininum width, 1 is precision; float value is copied onto buff
     strcat( dataStr, buffer); //append the converted float
     strcat( dataStr, ", "); //append the delimeter
 
-    ltoa(signal_motor, buffer, 12); //conver int to charStr
+    ltoa(signal_motor, buffer, 10); //conver int to charStr
     strcat(dataStr, buffer);//add it onto the end
     strcat( dataStr, 0); //terminate correctly 
 

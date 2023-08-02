@@ -10,8 +10,8 @@ With the current setup, a sampling rate of around 250-500 Hz can be achieved.
 #include "PID.h"
 
 // These are the pins to which the reaction wheel's motor is connected
-int direction_pin = 10;
-int pwm_pin = 11;
+int direction_pin = 5;
+int pwm_pin = 6;
 
 // flag is used to write to the direction pin of the motor
 // HIGH is ANTICLOCKWISE
@@ -81,7 +81,7 @@ void loop() {
         float w_rw = controller.calculate(w_rocket, (t-prev_t)*1E-3); // units given to controller have to be SI
         prev_t = t;
 
-        // Depending on the sign of w_rocket, we set the direction of the motor. For example, if w_rw>0, this
+        // Depending on the sign of w_rw, we set the direction of the motor. For example, if w_rw>0, this
         // means we want to spin reaction wheel anticlockwise, which requires flag set to HIGH.
         if (w_rw > 0){
             flag = HIGH;
@@ -140,7 +140,7 @@ bool has_rocket_launched(){
         }
         
         // In case of a sensor reading error, we only require that most of the measurements confirm a rocket launch.
-        if (n_true_positives > n_consecutive_tests-2){
+        if (n_true_positives >= n_consecutive_tests-2){
           decision = true;
         }
     }
