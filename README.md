@@ -10,5 +10,5 @@ Utilizing a PID controller and leveraging data from the attached BNO055 IMU, the
 * For those who desire a more streamlined version of the code without data logging functionality, the procedure is equally simple: disconnect the SD card reader from the Arduino, and then upload the 'main.ino' file.
 </div>
 
-![electrical diagram](https://github.com/Greekzombie/starscout-reaction-wheel/assets/95311543/f94b3022-eba7-4781-ae12-f0eeca357fb3)
+![electrical diagram](https://github.com/Greekzombie/starscout-reaction-wheel/assets/95311543/c9a2a8d3-219a-4315-a114-826d21954f6e)
 
